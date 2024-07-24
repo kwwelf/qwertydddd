@@ -2,7 +2,7 @@
 return [
     'provider'=>'pgsql',
     'hostname'=>'localhost',
-    'database'=>'frame',
+    'database'=>'frame1',
     'username'=>'postgres',
     'password'=>''
 ];

@@ -59,7 +59,7 @@ class UserModels extends BaseModel
             'error_message' => $error_message
         ];
     }
-    public function changePasswordByCurrentPassword($current, $new_password, $confirm_new_password)
+    public function changePasswordByCurrentPassword($current_password, $new_password, $confirm_new_password)
     {
         $result = false;
         $error_message = '';
@@ -67,14 +67,17 @@ class UserModels extends BaseModel
         if (empty($current_password)) {
             $error_message .= "Введите текущий пароль!<br>";
         }
-        if (empty(!$new_password)) {
+        if (empty($new_password)) {
             $error_message .= "Введите новый пароль!<br>";
         }
         if (empty($confirm_new_password)) {
             $error_message .= "Пароль не совпадает!<br>";
         }
+        if ($new_password != $confirm_new_password){
+            $error_message .= "Пароли не совпадают!<br>";
+        }
         if (empty($error_message)) {
-            $users = $this->select('select * from users where login = login', [
+            $users = $this->select('select * from users where login = :login', [
                 'login' => $_SESSION['user']['login']
             ]);
 

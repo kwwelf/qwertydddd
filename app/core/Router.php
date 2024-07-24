@@ -12,6 +12,12 @@ class Router
     {
         $url = trim($_SERVER['REQUEST_URI'], '/');
         if (!empty($url)) {
+            if (strpos($url, '?')!== false){
+                $link = explode('?', $url);
+                if (!empty($link[0])) {
+                    $url = $link[0];
+                }
+            }
             $params = explode('/', $url);
             if (!empty($params[0]) && !empty($params[1])) {
                 $this->params = [

@@ -60,7 +60,7 @@
                                         id="field_description"
                                         cols="50"
                                         rows="8"
-                                        placeholder="Введиет описание"
+                                        placeholder="Введите описание"
                                 ><?= !empty($_POST['news']['description'])
                                         ? $_POST['news']['description']
                                         : ''
