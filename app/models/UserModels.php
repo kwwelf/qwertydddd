@@ -104,4 +104,14 @@ class UserModels extends BaseModel
             'error_message' => $error_message
         ];
     }
+    public function getListUsers()
+    {
+        $result = null;
+
+        $users = $this->select('select id, username, login, is_admin from users');
+        if (!empty($users)) {
+            $result = $users;
+        }
+        return $result;
+    }
 }

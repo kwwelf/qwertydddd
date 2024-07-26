@@ -8,21 +8,21 @@ use app\models\NewsModels;
 
 class NewsController extends InitController
 {
-    public function behaviours()
+    public function behaviors()
     {
         return [
             'access' => [
                 'rules' => [
                     [
                         'actions' => ["list"],
-                        'rules' => [UserOperations::RoleUser, UserOperations::RoleAdmin],
+                        'roles' => [UserOperations::RoleUser, UserOperations::RoleAdmin],
                         'matchCallback' => function () {
                             $this->redirect('user/login');
                         }
                     ],
                     [
-                        'actions' => ['add'],
-                        'rules' => [UserOperations::RoleAdmin],
+                        'actions' => ['add', 'edit'],
+                        'roles' => [UserOperations::RoleAdmin],
                         'matchCallback' => function () {
                             $this->redirect('news/list');
                         }
@@ -69,4 +69,69 @@ class NewsController extends InitController
             'error_message' => $error_message
         ]);
     }
+    public function actionEdit()
+    {
+        $this->view->title = 'Редактирование новости';
+        $news_id = !empty($_GET['news_id']) ? $_GET['news_id']: null;
+        $news = null;
+        $error_message = '';
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST["btn_news_edit_form"])){
+            $news_data = !empty($_POST['news']) ? $_POST['news'] : null;
+
+            if (!empty($news_data)) {
+                $news_model = new NewsModels();
+                $result_edit = $news_model->edit($news_id , $news_data);
+                if ($result_edit['result']) {
+                    $this->redirect('/news/list');
+                } else {
+                    $error_message = $result_edit['error_message'];
+                }
+            }
+        }
+        if (!empty($news_id)) {
+            $news_model = new NewsModels();
+            $news = $news_model->getNewsById($news_id);
+            if (empty($news)) {
+                $error_message = "Новость не найдена";
+            }
+        } else {
+            $error_message = "Отсутствует идентификатор записи!";
+        }
+        $this->render('edit', [
+            'sidebar' => UserOperations::getMenuLinks(),
+            'news' => $news,
+            'error_message'=> $error_message
+        ]);
+    }
+    public function actionDelete()
+    {
+        $this->view->title = 'Редактирование новости';
+        $news_id = !empty($_GET['news_id']) ? $_GET['news_id']: null;
+        $news = null;
+        $error_message = '';
+        if (!empty($news_id)) {
+            $news_model  = new NewsModels();
+            $news = $news_model->getNewsById($news_id);
+            if (!empty($news)) {
+                $result_delete = $news_model->deleteById($news_id);
+                if ($result_delete['result']) {
+                    $this->redirect('/news/list');
+                } else {
+                    $error_message = $result_delete['error_message'];
+                }
+            } else {
+                $error_message = 'новость не найдена';
+            }
+        } else {
+            $error_message =  'отсутствует идентификатор записи';
+        }
+        $this->render( 'delete', [
+            'sidebar' => UserOperations::getMenuLinks(),
+            'news' => $news,
+            'error_message' => $error_message
+        ]);
+    }
+
+
+
 }
